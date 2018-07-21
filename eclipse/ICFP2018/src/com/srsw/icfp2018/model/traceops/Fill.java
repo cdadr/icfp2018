@@ -1,5 +1,8 @@
 package com.srsw.icfp2018.model.traceops;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+
 import com.srsw.icfp2018.model.Bot;
 import com.srsw.icfp2018.model.State;
 import com.srsw.icfp2018.model.Trace;
@@ -8,12 +11,23 @@ import com.srsw.icfp2018.model.Voxel;
 
 public class Fill extends Trace {
 
-	public Vector3 nd;
+	public final Vector3 nd;
 	
 	public Fill(int i) {
 		nd = decodeND(i);
 	}
 	
+	public Fill(Vector3 v) {
+		nd = v;
+		// make sure it's valid
+		if ((nd.x != 0) && (nd.y != 0) && (nd.z != 0)) {
+			throw new RuntimeException("At least one axis must be zero: " + this);
+		}
+		if ((Math.abs(nd.x) > 1) || (Math.abs(nd.y) > 1) || (Math.abs(nd.z) > 1)) {
+			throw new RuntimeException("nd out of range: " + this);
+		}
+	}
+
 	@Override
 	public String toString() {
 		return "Fill " + nd;
@@ -31,5 +45,11 @@ public class Fill extends Trace {
 			// already something there; do nothing, but it still takes energy
 			state.energy += 6;
 		}
+	}
+	
+	@Override
+	public void write(FileOutputStream out) throws IOException {
+		int i = ((nd.x + 1) * 9) + ((nd.y + 1) * 3) + (nd.z + 1);
+		out.write((i << 3) | 0x03);
 	}
 }

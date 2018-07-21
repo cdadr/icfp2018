@@ -1,5 +1,8 @@
 package com.srsw.icfp2018.model.traceops;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+
 import com.srsw.icfp2018.model.Bot;
 import com.srsw.icfp2018.model.Harmonics;
 import com.srsw.icfp2018.model.State;
@@ -20,5 +23,11 @@ public class Flip extends Trace {
 		} else {
 			state.harmonics = Harmonics.High;
 		}
+	}
+
+
+	@Override
+	public void write(FileOutputStream out) throws IOException {
+		out.write(0xfd);
 	}
 }

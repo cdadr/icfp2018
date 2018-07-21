@@ -34,6 +34,6 @@ public class RunTrace {
 		state.printState(System.out);
 		
 		state.validateModel(model);
-		System.out.println("Model validated OK.");
+		System.out.format("Model validated OK; final energy: %,d\n", state.energy);
 	}
 }

@@ -1,5 +1,7 @@
 package com.srsw.icfp2018.model;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
@@ -16,9 +18,12 @@ import com.srsw.icfp2018.model.traceops.Wait;
 public abstract class Trace {
 	
 	// singletons (no args)
-	private static Halt halt = new Halt();
-	private static Wait wait = new Wait();
-	private static Flip flip = new Flip();
+	public static final Halt halt = new Halt();
+	public static final Wait wait = new Wait();
+	public static final Flip flip = new Flip();
+	
+	// frequently used
+	public static final Fill fillDown = new Fill(Vector3.down);
 
 	public static void appendFromStream(List<Trace> list, int opcode, InputStream in) throws TraceFileException {
 		int low3 = opcode & 0x07;
@@ -98,13 +103,26 @@ public abstract class Trace {
 	
 	
 	protected Vector3 decodeSLD(int a, int i) {
-		// TODO Auto-generated method stub
 		throw new RuntimeException("not implemented");
 	}
 
 
-//	public abstract void execute(State state);
+//	public abstract void execute(Bot bot);
 	public void execute(Bot bot) {
 		throw new RuntimeException("not implemented: " + this);
 	}
+
+//	public abstract void write(FileOutputStream out) throws IOException;
+	public void write(FileOutputStream out) throws IOException {
+		throw new RuntimeException("not implemented");
+	}
+
+
+	public static void writeTrace(FileOutputStream out, List<Trace> trace) throws IOException {
+		for (Trace op : trace) {
+			op.write(out);
+		}
+	}
+
+
 }

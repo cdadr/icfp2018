@@ -2,6 +2,7 @@ package com.srsw.icfp2018;
 
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.IOException;
 
 import com.srsw.icfp2018.generator.TraceGenerator;
 import com.srsw.icfp2018.model.Model;
@@ -17,7 +18,12 @@ public class GenerateTrace {
 		
 		String modelFilename = args[0];
 		String traceFilename = (args.length > 1) ? args[1] : null;
-		
+
+		generateOne(modelFilename, traceFilename);
+	}
+
+
+	public static void  generateOne(String modelFilename, String traceFilename) throws IOException {
 		FileInputStream modelFile = new FileInputStream(modelFilename);
 		Model model = new Model();
 		try {

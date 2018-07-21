@@ -106,9 +106,12 @@ public class TraceGenerator {
 		// next move in z-dir (front/back)
 		if (currentPos.z != z1) {
 			int dz = z1 - currentPos.z;
-			// TODO split if dz > 15
-			SMove move = new SMove(new Vector3(0, 0, dz));
-			trace.add(move);
+			while (dz != 0) {
+				int dz0 = (dz > 15) ? 15 : ((dz < -15) ? -15 : dz);
+				SMove move = new SMove(new Vector3(0, 0, dz0));
+				trace.add(move);
+				dz -= dz0;
+			}
 			currentPos.z = z1;
 		}
 		
@@ -116,9 +119,12 @@ public class TraceGenerator {
 		// next move in x-dir (left/right)
 		if (currentPos.x != x1) {
 			int dx = x1 - currentPos.x;
-			// TODO split if dx > 15
-			SMove move = new SMove(new Vector3(dx, 0, 0));
-			trace.add(move);
+			while (dx != 0) {
+				int dx0 = (dx > 15) ? 15 : ((dx < -15) ? -15 : dx);
+				SMove move = new SMove(new Vector3(dx0, 0, 0));
+				trace.add(move);
+				dx -= dx0;
+			}
 			currentPos.x = x1;
 		}
 		

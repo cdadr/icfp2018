@@ -1,7 +1,7 @@
 package com.srsw.icfp2018.model.traceops;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 
 import com.srsw.icfp2018.model.Bot;
 import com.srsw.icfp2018.model.State;
@@ -18,15 +18,10 @@ public class Fill extends Trace {
 	}
 	
 	public Fill(Vector3 v) {
+		assertND(v);
 		nd = v;
-		// make sure it's valid
-		if ((nd.x != 0) && (nd.y != 0) && (nd.z != 0)) {
-			throw new RuntimeException("At least one axis must be zero: " + this);
-		}
-		if ((Math.abs(nd.x) > 1) || (Math.abs(nd.y) > 1) || (Math.abs(nd.z) > 1)) {
-			throw new RuntimeException("nd out of range: " + this);
-		}
 	}
+
 
 	@Override
 	public String toString() {
@@ -48,7 +43,7 @@ public class Fill extends Trace {
 	}
 	
 	@Override
-	public void write(FileOutputStream out) throws IOException {
+	public void write(OutputStream out) throws IOException {
 		int i = ((nd.x + 1) * 9) + ((nd.y + 1) * 3) + (nd.z + 1);
 		out.write((i << 3) | 0x03);
 	}

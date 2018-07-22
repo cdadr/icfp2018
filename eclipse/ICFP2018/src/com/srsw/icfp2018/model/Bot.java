@@ -1,12 +1,12 @@
 package com.srsw.icfp2018.model;
 
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Bot implements Comparable<Bot> {
 	public int bid;
 	public Vector3 pos;
-	public Set<Integer> seeds;
+	public List<Integer> seeds;
 	public Trace nextOp;
 	public State state;
 	
@@ -35,11 +35,22 @@ public class Bot implements Comparable<Bot> {
 	public Bot(State state) {
 		bid = 1;
 		pos = new Vector3(0, 0, 0);
-		seeds = new TreeSet<>();
+		seeds = new ArrayList<>();
 		for (int i = 2; i <= 20; i++) {
 			seeds.add(i);
 		}
 		this.state = state;
+	}
+	
+	public Bot(Bot sourceBot, Vector3 nd, int m) {
+		bid = sourceBot.seeds.get(0);
+		pos = new Vector3(sourceBot.pos);
+		pos.move(nd);
+		seeds = new ArrayList<>();
+		if (m > 0) {
+			seeds.addAll(sourceBot.seeds.subList(1, m + 1));
+		}
+		state = sourceBot.state;
 	}
 
 	public void execute() {

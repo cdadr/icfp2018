@@ -1,8 +1,10 @@
 package com.srsw.icfp2018.model;
 
-import java.io.FileOutputStream;
+
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
+import java.io.PrintStream;
 import java.util.List;
 
 import com.srsw.icfp2018.model.traceops.Fill;
@@ -10,10 +12,13 @@ import com.srsw.icfp2018.model.traceops.Fission;
 import com.srsw.icfp2018.model.traceops.Flip;
 import com.srsw.icfp2018.model.traceops.FusionP;
 import com.srsw.icfp2018.model.traceops.FusionS;
+import com.srsw.icfp2018.model.traceops.GFill;
+import com.srsw.icfp2018.model.traceops.GVoid;
 import com.srsw.icfp2018.model.traceops.Halt;
 import com.srsw.icfp2018.model.traceops.LMove;
 import com.srsw.icfp2018.model.traceops.SMove;
 import com.srsw.icfp2018.model.traceops.Wait;
+import com.srsw.icfp2018.model.traceops.Void;
 
 public abstract class Trace {
 	
@@ -74,6 +79,24 @@ public abstract class Trace {
 			list.add(new Fill(high5));
 			break;
 			
+		case 0x02:
+			// void
+			list.add(new Void(high5));
+			break;
+			
+			
+		case 0x01:
+			// gfill
+			list.add(new GFill(high5, in));
+			break;
+			
+			
+		case 0x00:
+			// gvoid
+			list.add(new GVoid(high5, in));
+			break;
+			
+			
 		default:
 			throw new TraceFileException(String.format("Bad opcode 0x%02x", opcode));
 		}
@@ -100,10 +123,19 @@ public abstract class Trace {
 			throw new TraceFileException(String.format("Bad value for a: 0x%02x", a));
 		}
 	}
-	
+
+	protected void assertND(Vector3 nd) {
+		if ((nd.x != 0) && (nd.y != 0) && (nd.z != 0)) {
+			throw new RuntimeException("At least one axis must be zero: " + this);
+		}
+		if ((Math.abs(nd.x) > 1) || (Math.abs(nd.y) > 1) || (Math.abs(nd.z) > 1)) {
+			throw new RuntimeException("nd out of range: " + this);
+		}
+	}
+
 	
 	protected Vector3 decodeSLD(int a, int i) {
-		throw new RuntimeException("not implemented");
+		throw new RuntimeException("not implemented: " + this);
 	}
 
 
@@ -112,17 +144,24 @@ public abstract class Trace {
 		throw new RuntimeException("not implemented: " + this);
 	}
 
-//	public abstract void write(FileOutputStream out) throws IOException;
-	public void write(FileOutputStream out) throws IOException {
-		throw new RuntimeException("not implemented");
+//	public abstract void write(OutputStream out) throws IOException;
+	public void write(OutputStream out) throws IOException {
+		throw new RuntimeException("not implemented: " + this);
 	}
 
 
-	public static void writeTrace(FileOutputStream out, List<Trace> trace) throws IOException {
+	public static void writeTrace(OutputStream out, List<Trace> trace) throws IOException {
 		for (Trace op : trace) {
 			op.write(out);
 		}
 	}
 
 
+	public static void printTrace(PrintStream out, List<Trace> trace) {
+		out.println("#Commands: " + trace.size());
+		out.println("Commands:");
+		for (Trace op : trace) {
+			out.println("    " + op);
+		}
+	}
 }

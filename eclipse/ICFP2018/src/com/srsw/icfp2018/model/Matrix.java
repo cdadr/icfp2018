@@ -42,6 +42,15 @@ public class Matrix<T> {
 		return get(v.x, v.y, v.z);
 	}
 	
+	public void clear(int x, int y, int z) {
+		Integer index = index(x, y, z);
+		matrix.remove(index);
+	}
+
+	public void clear(Vector3 v) {
+		clear(v.x, v.y, v.z);
+	}
+	
 	public void print(PrintStream out) {
 		for (int y = 0; y < dimensions.y; y++) {
 			out.println("y: " + y);

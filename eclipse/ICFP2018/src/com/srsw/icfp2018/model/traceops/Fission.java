@@ -2,7 +2,9 @@ package com.srsw.icfp2018.model.traceops;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 
+import com.srsw.icfp2018.model.Bot;
 import com.srsw.icfp2018.model.Trace;
 import com.srsw.icfp2018.model.TraceFileException;
 import com.srsw.icfp2018.model.Vector3;
@@ -24,8 +26,37 @@ public class Fission extends Trace {
 		}
 	}
 	
+	public Fission(Vector3 nd, int m) {
+		assertND(nd);
+		if ((m < 0) || (m > 31)) {
+			throw new RuntimeException("Bad value for m: " + m);
+		}
+		this.nd = nd;
+		this.m = m;
+	}
+
 	@Override
 	public String toString() {
 		return "Fission " + nd + " " + m;
+	}
+	
+	@Override
+	public void execute(Bot bot) {
+		Bot newbot = new Bot(bot, nd, m);
+		bot.state.bots.add(newbot);
+		
+		// note constructor doesn't modify parent bot
+		bot.seeds = bot.seeds.subList(m + 1, bot.seeds.size());
+		
+		for (Bot i : bot.state.bots) {
+			System.out.println("  " + i);
+		}
+	}
+	
+	@Override
+	public void write(OutputStream out) throws IOException {
+		int i = ((nd.x + 1) * 9) + ((nd.y + 1) * 3) + (nd.z + 1);
+		out.write((i << 3) | 0x05);
+		out.write(m);
 	}
 }

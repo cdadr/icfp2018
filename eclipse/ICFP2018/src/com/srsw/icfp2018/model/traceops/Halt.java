@@ -1,7 +1,7 @@
 package com.srsw.icfp2018.model.traceops;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStream;
 
 import com.srsw.icfp2018.model.Bot;
 import com.srsw.icfp2018.model.State;
@@ -22,7 +22,7 @@ public class Halt extends Trace {
 
 
 	@Override
-	public void write(FileOutputStream out) throws IOException {
+	public void write(OutputStream out) throws IOException {
 		out.write(0xff);
 	}
 }

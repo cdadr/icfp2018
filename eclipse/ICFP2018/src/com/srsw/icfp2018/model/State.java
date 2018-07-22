@@ -49,11 +49,7 @@ public class State {
 	}
 
 	public void printTrace(PrintStream out) {
-		out.println("#Commands: " + trace.size());
-		out.println("Commands:");
-		for (Trace op : trace) {
-			out.println("    " + op);
-		}
+		Trace.printTrace(out, trace);
 	}
 
 	public void run() {
@@ -122,6 +118,37 @@ public class State {
 		}
 		if (error) {
 			throw new ModelRuntimeException("state did not match model");
+		}
+	}
+
+	public void validateClear() throws ModelRuntimeException {
+		boolean error = false;
+		for (int x = 0; x < r; x++) {
+			for (int y = 0; y < r; y++) {
+				for (int z = 0; z < r; z++) {
+					boolean isFull = matrix.get(x, y, z) != null;
+					if (isFull) {
+						System.err.println("Full voxel <" + x + "," + y + "," + z + ">");
+						error = true;
+					}
+				}
+			}
+		}
+		if (error) {
+			throw new ModelRuntimeException("state did not match model");
+		}
+	}
+
+	public void initModel(Model model) {
+		for (int x = 0; x < r; x++) {
+			for (int y = 0; y < r; y++) {
+				for (int z = 0; z < r; z++) {
+					if (model.get(x, y, z)) {
+						Voxel voxel = new Voxel(x,  y, z);
+						matrix.put(x, y, z, voxel);
+					}
+				}
+			}
 		}
 	}
 }

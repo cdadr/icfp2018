@@ -56,7 +56,7 @@ public class GenerateTrace {
 		generator.run();
 		
 		System.out.println("--- generation complete; len=" + generator.trace.size() + " ---");
-		generator.printTrace(System.out);
+//		generator.printTrace(System.out);
 		
 		if (traceFilename != null) {
 			FileOutputStream traceFile = new FileOutputStream(traceFilename);

@@ -28,22 +28,69 @@ public class GenerateTraceDir {
 			throw new IOException("could not create " + traceDir);
 		}
 		
+		doAddTasks(modelDir, traceDir);
+		doDeleteTasks(modelDir, traceDir);
+		doReplaceTasks(modelDir, traceDir);
+		
+	}
+
+	private static void doAddTasks(File modelDir, File traceDir) throws IOException {
 		FilenameFilter filter = new FilenameFilter() {
 			@Override
 			public boolean accept(File dir, String name) {
-				return name.toLowerCase().endsWith(".mdl");
+				return name.startsWith("FA") && name.endsWith("_tgt.mdl");
 			}
 		};
-		File[] modelFiles = modelDir.listFiles(filter);
-		Arrays.sort(modelFiles);
-		System.out.println("#files=" + modelFiles.length + ":");
-		for (File modelFile : modelFiles) {
-			String traceFilename = modelFile.getName().replaceFirst("_tgt\\.mdl$", ".nbt");
+		File[] tgtModelFiles = modelDir.listFiles(filter);
+		Arrays.sort(tgtModelFiles);
+		System.out.println("#files=" + tgtModelFiles.length + ":");
+		for (File tgtModelFile : tgtModelFiles) {
+			String traceFilename = tgtModelFile.getName().replaceFirst("_tgt\\.mdl$", ".nbt");
 			File traceFile = new File(traceDir, traceFilename);
-			System.out.println("  " + modelFile + " -> " + traceFile);
+			System.out.println("  " + tgtModelFile + " -> " + traceFile);
 			
-			GenerateTrace.generateOne(null, modelFile.getPath(), traceFile.getPath(), Mode.Add);
-			break;
+			GenerateTrace.generateOne(null, tgtModelFile.getPath(), traceFile.getPath(), Mode.Add);
+		}
+	}
+
+	private static void doDeleteTasks(File modelDir, File traceDir) throws IOException {
+		FilenameFilter filter = new FilenameFilter() {
+			@Override
+			public boolean accept(File dir, String name) {
+				return name.startsWith("FD") && name.endsWith("_src.mdl");
+			}
+		};
+		File[] srcModelFiles = modelDir.listFiles(filter);
+		Arrays.sort(srcModelFiles);
+		System.out.println("#files=" + srcModelFiles.length + ":");
+		for (File srcModelFile : srcModelFiles) {
+			String traceFilename = srcModelFile.getName().replaceFirst("_src\\.mdl$", ".nbt");
+			File traceFile = new File(traceDir, traceFilename);
+			System.out.println("  " + srcModelFile + " -> " + traceFile);
+			
+			GenerateTrace.generateOne(srcModelFile.getPath(), null, traceFile.getPath(), Mode.Delete);
+		}
+	}
+
+	private static void doReplaceTasks(File modelDir, File traceDir) throws IOException {
+		FilenameFilter filter = new FilenameFilter() {
+			@Override
+			public boolean accept(File dir, String name) {
+				return name.startsWith("FR") && name.endsWith("_src.mdl");
+			}
+		};
+		File[] srcModelFiles = modelDir.listFiles(filter);
+		Arrays.sort(srcModelFiles);
+		System.out.println("#files=" + srcModelFiles.length + ":");
+		for (File srcModelFile : srcModelFiles) {
+			String tgtModelFilename = srcModelFile.getName().replaceFirst("_src", "_tgt");
+			File tgtModelFile = new File(modelDir, tgtModelFilename);
+			
+			String traceFilename = srcModelFile.getName().replaceFirst("_src\\.mdl$", ".nbt");
+			File traceFile = new File(traceDir, traceFilename);
+			System.out.println("  " + srcModelFile + " + " + tgtModelFile + " -> " + traceFile);
+			
+			GenerateTrace.generateOne(srcModelFile.getPath(), tgtModelFile.getPath(), traceFile.getPath(), Mode.Replace);
 		}
 	}
 }

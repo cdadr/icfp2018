@@ -114,4 +114,73 @@ public class Model {
 		}
 		return anyFound;
 	}
+	
+
+	public boolean deltaPlaneBBox(Model tgtModel, int y, Vector3 bboxL, Vector3 bboxH) {
+		boolean anyFound = false;
+		int minX = Integer.MAX_VALUE;
+		int maxX = Integer.MIN_VALUE;
+		int minZ = Integer.MAX_VALUE;
+		int maxZ = Integer.MIN_VALUE;
+		
+		for (int x = 0; x < r; x++) {
+			for (int z = 0; z < r; z++) {
+				if (get(x, y, z) != tgtModel.get(x, y, z)) {
+					minX = Math.min(minX, x);
+					maxX = Math.max(maxX, x);
+					minZ = Math.min(minZ, z);
+					maxZ = Math.max(maxZ, z);
+					anyFound = true;
+				}
+			}
+		}
+		
+		if (anyFound) {
+			bboxL.x = minX;
+			bboxL.y = y;
+			bboxL.z = minZ;
+			
+			bboxH.x = maxX;
+			bboxH.y = y;
+			bboxH.z = maxZ;
+		}
+		return anyFound;
+	}
+
+	public boolean deltaGlobalBBox(Model tgtModel, Vector3 bboxL, Vector3 bboxH) {
+		boolean anyFound = false;
+		int minX = Integer.MAX_VALUE;
+		int maxX = Integer.MIN_VALUE;
+		int minY = Integer.MAX_VALUE;
+		int maxY = Integer.MIN_VALUE;
+		int minZ = Integer.MAX_VALUE;
+		int maxZ = Integer.MIN_VALUE;
+		
+		for (int x = 0; x < r; x++) {
+			for (int y = 0; y < r; y++) {
+				for (int z = 0; z < r; z++) {
+					if (get(x, y, z) != tgtModel.get(x, y, z)) {
+						minX = Math.min(minX, x);
+						maxX = Math.max(maxX, x);
+						minY = Math.min(minY, y);
+						maxY = Math.max(maxY, y);
+						minZ = Math.min(minZ, z);
+						maxZ = Math.max(maxZ, z);
+						anyFound = true;
+					}
+				}
+			}
+		}
+		
+		if (anyFound) {
+			bboxL.x = minX;
+			bboxL.y = minY;
+			bboxL.z = minZ;
+			
+			bboxH.x = maxX;
+			bboxH.y = maxY;
+			bboxH.z = maxZ;
+		}
+		return anyFound;
+	}
 }

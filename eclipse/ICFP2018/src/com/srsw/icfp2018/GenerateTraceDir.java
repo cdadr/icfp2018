@@ -5,6 +5,8 @@ import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.Arrays;
 
+import com.srsw.icfp2018.generator.TraceGenerator.Mode;
+
 public class GenerateTraceDir {
 
 	public static void main(String[] args) throws Exception {
@@ -40,7 +42,7 @@ public class GenerateTraceDir {
 			File traceFile = new File(traceDir, traceFilename);
 			System.out.println("  " + modelFile + " -> " + traceFile);
 			
-			GenerateTrace.generateOne(modelFile.getPath(), traceFile.getPath());
+			GenerateTrace.generateOne(null, modelFile.getPath(), traceFile.getPath(), Mode.Add);
 			break;
 		}
 	}

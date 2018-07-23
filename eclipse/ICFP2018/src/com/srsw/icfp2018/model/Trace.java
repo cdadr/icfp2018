@@ -29,6 +29,12 @@ public abstract class Trace {
 	
 	// frequently used
 	public static final Fill fillDown = new Fill(Vector3.down);
+	public static final Fill fillPosX = new Fill(Vector3.right);
+	public static final Fill fillNegX = new Fill(Vector3.left);
+	public static final Void voidDown = new Void(Vector3.down);
+	public static final Void voidPosX = new Void(Vector3.right);
+	public static final Void voidNegX = new Void(Vector3.left);
+
 
 	public static void appendFromStream(List<Trace> list, int opcode, InputStream in) throws TraceFileException {
 		int low3 = opcode & 0x07;

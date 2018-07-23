@@ -4,6 +4,8 @@ public class Vector3 {
 	public int x, y, z;
 
 	public static final Vector3 down = new Vector3(0, -1, 0);
+	public static final Vector3 left = new Vector3(-1, 0, 0);
+	public static final Vector3 right = new Vector3( 1, 0, 0);
 
 	public Vector3(int x, int y, int z) {
 		this.x = x;

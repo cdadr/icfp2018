@@ -15,6 +15,7 @@ public class State {
 	public Harmonics harmonics = Harmonics.Low;
 	public Matrix<Voxel> matrix = new Matrix<>();
 	public Set<Bot> bots = new TreeSet<Bot>();
+//	public List<Bot> bots = new ArrayList<>();
 	public List<Trace> trace = null;
 	
 	public State(int r) {
@@ -52,8 +53,14 @@ public class State {
 		Trace.printTrace(out, trace);
 	}
 
-	public void run() {
+	public void run() throws ModelRuntimeException {
 		while (!trace.isEmpty()) {
+			if (trace.size() < bots.size()) {
+				throw new ModelRuntimeException("Not enough traces for " + bots.size() + " bots");
+			}
+			if (bots.isEmpty()) {
+				throw new ModelRuntimeException("no active bots");
+			}
 			for (Bot bot : bots) {
 				Trace op = trace.remove(0);		// XXX we aren't supposed to remove the op until after execution
 				bot.nextOp = op;
@@ -68,8 +75,10 @@ public class State {
 				energy += 3 * r * r * r;
 			}
 			energy += 20 * bots.size();
-			
-			for (Bot bot : bots) {
+
+			// create a copy so iterator doesn't blow up on fission/fusion
+			List<Bot> tmpList = new ArrayList<>(bots);	
+			for (Bot bot : tmpList) {
 				// In theory, these could execute in parallel. In theory.
 				bot.execute();
 			}

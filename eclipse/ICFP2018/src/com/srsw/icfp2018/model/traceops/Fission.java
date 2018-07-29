@@ -5,14 +5,16 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import com.srsw.icfp2018.model.Bot;
+import com.srsw.icfp2018.model.ModelRuntimeException;
+import com.srsw.icfp2018.model.State;
 import com.srsw.icfp2018.model.Trace;
 import com.srsw.icfp2018.model.TraceFileException;
 import com.srsw.icfp2018.model.Vector3;
 
 public class Fission extends Trace {
 
-	public Vector3 nd;
-	public int m;
+	public final Vector3 nd;
+	public final int m;
 
 	public Fission(int i, InputStream in) throws TraceFileException {
 		nd = decodeND(i);
@@ -41,16 +43,19 @@ public class Fission extends Trace {
 	}
 	
 	@Override
-	public void execute(Bot bot) {
+	public void execute(Bot bot) throws ModelRuntimeException {
+		State state = bot.state;
 		Bot newbot = new Bot(bot, nd, m);
-		bot.state.bots.add(newbot);
+		state.bots.add(newbot);
 		
 		// note constructor doesn't modify parent bot
 		bot.seeds = bot.seeds.subList(m + 1, bot.seeds.size());
 		
-		for (Bot i : bot.state.bots) {
+		for (Bot i : state.bots) {
 			System.out.println("  " + i);
 		}
+		
+		state.energy += 24;
 	}
 	
 	@Override

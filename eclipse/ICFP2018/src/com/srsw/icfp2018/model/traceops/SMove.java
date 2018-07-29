@@ -5,13 +5,14 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import com.srsw.icfp2018.model.Bot;
+import com.srsw.icfp2018.model.ModelRuntimeException;
 import com.srsw.icfp2018.model.Trace;
 import com.srsw.icfp2018.model.TraceFileException;
 import com.srsw.icfp2018.model.Vector3;
 
 public class SMove extends Trace {
 	
-	public Vector3 lld;
+	public final Vector3 lld;
 
 	public SMove(int opcode, InputStream in) throws TraceFileException {
 		if ((opcode & 0xc8) != 0) {
@@ -44,8 +45,9 @@ public class SMove extends Trace {
 	}
 	
 	@Override
-	public void execute(Bot bot) {
+	public void execute(Bot bot) throws ModelRuntimeException {
 		bot.pos.move(lld);
+		bot.pos.validate(bot.state.r);
 		bot.state.energy += 2 * lld.mlen();
 	}
 	

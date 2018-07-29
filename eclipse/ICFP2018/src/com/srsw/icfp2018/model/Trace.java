@@ -139,6 +139,15 @@ public abstract class Trace {
 		}
 	}
 
+	protected void assertFD(Vector3 nd) {
+		if ((nd.x == 0) && (nd.y == 0) && (nd.z == 0)) {
+			throw new RuntimeException("At least one axis must be non-zero: " + this);
+		}
+		if ((Math.abs(nd.x) > 30) || (Math.abs(nd.y) > 30) || (Math.abs(nd.z) > 30)) {
+			throw new RuntimeException("fd out of range: " + this);
+		}
+	}
+
 	
 	protected Vector3 decodeSLD(int a, int i) {
 		throw new RuntimeException("not implemented: " + this);
@@ -146,7 +155,7 @@ public abstract class Trace {
 
 
 //	public abstract void execute(Bot bot);
-	public void execute(Bot bot) {
+	public void execute(Bot bot) throws ModelRuntimeException {
 		throw new RuntimeException("not implemented: " + this);
 	}
 

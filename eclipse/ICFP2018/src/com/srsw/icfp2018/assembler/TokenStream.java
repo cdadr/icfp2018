@@ -17,7 +17,7 @@ public class TokenStream {
 		this.in = new PushbackReader(in);
 	}
 
-	public Token nextToken() throws IOException {
+	public Token nextToken() throws IOException, ParseException {
 		while (true) {
 			int c = in.read();
 			if (c == -1) {
@@ -54,12 +54,12 @@ public class TokenStream {
 		}
 	}
 
-	private int parseNumber() throws IOException {
+	private int parseNumber() throws IOException, ParseException {
 		int c = in.read();
 		if ((c == '-') || (c == '+') || ((c >= '0') && (c <= '9'))) {
 			return parseNumber(c);
 		} else {
-			throw new IOException("bad number char: " + c);
+			throw new ParseException("bad number char: " + c);
 		}
 	}
 	
@@ -84,13 +84,17 @@ public class TokenStream {
 			if ((c == -1) || Character.isWhitespace(c)) {
 				break;
 			}
+			if (c == '<') {
+				in.unread(c);
+				break;
+			}
 			sb.append((char) c);
 		}
 		
 		return new TokenString(sb.toString());
 	}
 
-	private Token parseVector3() throws IOException {
+	private Token parseVector3() throws IOException, ParseException {
 		int x = parseNumber();
 		expect(',');
 		int y = parseNumber();

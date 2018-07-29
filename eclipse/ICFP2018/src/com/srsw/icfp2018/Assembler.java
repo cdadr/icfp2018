@@ -1,5 +1,6 @@
 package com.srsw.icfp2018;
 
+
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
@@ -8,6 +9,7 @@ import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.srsw.icfp2018.assembler.ParseException;
 import com.srsw.icfp2018.assembler.Token;
 import com.srsw.icfp2018.assembler.Token.TokenNumber;
 import com.srsw.icfp2018.assembler.Token.TokenString;
@@ -18,7 +20,10 @@ import com.srsw.icfp2018.model.traceops.Fill;
 import com.srsw.icfp2018.model.traceops.Fission;
 import com.srsw.icfp2018.model.traceops.FusionP;
 import com.srsw.icfp2018.model.traceops.FusionS;
+import com.srsw.icfp2018.model.traceops.GFill;
+import com.srsw.icfp2018.model.traceops.GVoid;
 import com.srsw.icfp2018.model.traceops.SMove;
+import com.srsw.icfp2018.model.traceops.Void;
 
 public class Assembler {
 	
@@ -52,7 +57,7 @@ public class Assembler {
 	}
 	
 
-	private static List<Trace> readTrace(Reader in) throws IOException {
+	private static List<Trace> readTrace(Reader in) throws ParseException, IOException {
 		List<Trace> trace = new ArrayList<>();
 		
 		TokenStream tokenStream = new TokenStream(in);
@@ -74,25 +79,71 @@ public class Assembler {
 				trace.add(Trace.wait);
 				
 			} else if (opcode.equals("smove")) {
-				TokenVector lld = (TokenVector) tokenStream.nextToken();
-				trace.add(new SMove(lld.value));
+				try {
+					TokenVector lld = (TokenVector) tokenStream.nextToken();
+					trace.add(new SMove(lld.value));
+				} catch (ClassCastException e) {
+					throw new ParseException("SMove: lld");
+				}
 				
 			} else if (opcode.equals("fill")) {
-				TokenVector nd = (TokenVector) tokenStream.nextToken();
-				trace.add(new Fill(nd.value));
+				try {
+					TokenVector nd = (TokenVector) tokenStream.nextToken();
+					trace.add(new Fill(nd.value));
+				} catch (ClassCastException e) {
+					throw new ParseException("Fill: nd");
+				}
+				
+			} else if (opcode.equals("void")) {
+				try {
+					TokenVector nd = (TokenVector) tokenStream.nextToken();
+					trace.add(new Void(nd.value));
+				} catch (ClassCastException e) {
+					throw new ParseException("Void: nd");
+				}
 				
 			} else if (opcode.equals("fission")) {
-				TokenVector nd = (TokenVector) tokenStream.nextToken();
-				TokenNumber m = (TokenNumber) tokenStream.nextToken();
-				trace.add(new Fission(nd.value, m.value));
+				try {
+					TokenVector nd = (TokenVector) tokenStream.nextToken();
+					TokenNumber m = (TokenNumber) tokenStream.nextToken();
+					trace.add(new Fission(nd.value, m.value));
+				} catch (ClassCastException e) {
+					throw new ParseException("Fission: nd  m");
+				}
 				
 			} else if (opcode.equals("fusionp")) {
-				TokenVector nd = (TokenVector) tokenStream.nextToken();
-				trace.add(new FusionP(nd.value));
+				try {
+					TokenVector nd = (TokenVector) tokenStream.nextToken();
+					trace.add(new FusionP(nd.value));
+				} catch (ClassCastException e) {
+					throw new ParseException("FusionP: nd");
+				}
 				
 			} else if (opcode.equals("fusions")) {
-				TokenVector nd = (TokenVector) tokenStream.nextToken();
-				trace.add(new FusionS(nd.value));
+				try {
+					TokenVector nd = (TokenVector) tokenStream.nextToken();
+					trace.add(new FusionS(nd.value));
+				} catch (ClassCastException e) {
+					throw new ParseException("FusionS: nd");
+				}
+				
+			} else if (opcode.equals("gfill")) {
+				try {
+					TokenVector nd = (TokenVector) tokenStream.nextToken();
+					TokenVector fd = (TokenVector) tokenStream.nextToken();
+					trace.add(new GFill(nd.value, fd.value));
+				} catch (ClassCastException e) {
+					throw new ParseException("GFill: nd  fd");
+				}
+				
+			} else if (opcode.equals("gvoid")) {
+				try {
+					TokenVector nd = (TokenVector) tokenStream.nextToken();
+					TokenVector fd = (TokenVector) tokenStream.nextToken();
+					trace.add(new GVoid(nd.value, fd.value));
+				} catch (ClassCastException e) {
+					throw new ParseException("GVoid: nd  fd");
+				}
 				
 			} else {
 				throw new IOException("unknown opcode \"" + opcode + "\"");

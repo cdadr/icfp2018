@@ -10,25 +10,9 @@ public class Bot implements Comparable<Bot> {
 	public Trace nextOp;
 	public State state;
 	
-	@Override
-	public int compareTo(Bot bot) {
-		return this.bid - bot.bid;
-	}
+	private static final int NUM_BOTS = 40;		// full
+//	private static final int NUM_BOTS = 20;		// lightning
 	
-	@Override
-	public boolean equals(Object obj) {
-		if (obj instanceof Bot) {
-			return false;
-		} else {
-			Bot bot = (Bot) obj;
-			return this.bid == bot.bid;
-		}
-	}
-	
-	@Override
-	public String toString() {
-		return bid + ": " + pos + " " + seeds;
-	}
 	
 	
 	// should only be used for initial Bot
@@ -36,13 +20,14 @@ public class Bot implements Comparable<Bot> {
 		bid = 1;
 		pos = new Vector3(0, 0, 0);
 		seeds = new ArrayList<>();
-		for (int i = 2; i <= 20; i++) {
+		for (int i = 2; i <= NUM_BOTS; i++) {
 			seeds.add(i);
 		}
 		this.state = state;
 	}
 	
-	public Bot(Bot sourceBot, Vector3 nd, int m) {
+	// called by fission op
+	public Bot(Bot sourceBot, Vector3 nd, int m) throws ModelRuntimeException {
 		bid = sourceBot.seeds.get(0);
 		pos = new Vector3(sourceBot.pos);
 		pos.move(nd);
@@ -51,9 +36,44 @@ public class Bot implements Comparable<Bot> {
 			seeds.addAll(sourceBot.seeds.subList(1, m + 1));
 		}
 		state = sourceBot.state;
+		pos.validate(state.r);
 	}
 
-	public void execute() {
+	@Override
+	public int compareTo(Bot bot) {
+		return this.bid - bot.bid;
+	}
+	
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof Bot) {
+			Bot bot = (Bot) obj;
+			return this.bid == bot.bid;
+		} else {
+			return false;
+		}
+	}
+	
+	@Override
+	public String toString() {
+//		return bid + ": " + pos + " " + seeds;
+		StringBuilder sb = new StringBuilder();
+		int nSeeds = seeds.size();
+		sb.append(bid).append(": ").append(pos).append(" ").append(nSeeds);
+		if (nSeeds == 0) {
+			sb.append("[]");
+		} else if (nSeeds < 4) {
+			sb.append(seeds);
+		} else {
+			sb.append("[")
+				.append(seeds.get(0)).append(",")
+				.append(seeds.get(1)).append(",")
+				.append(seeds.get(2)).append(",...]");
+		}
+		return sb.toString();
+	}
+	
+	public void execute() throws ModelRuntimeException {
 		System.out.println(">> bot " + bid + " exec: " + nextOp);
 		nextOp.execute(this);
 		nextOp = null;

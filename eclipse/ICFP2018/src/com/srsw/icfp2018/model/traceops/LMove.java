@@ -9,8 +9,8 @@ import com.srsw.icfp2018.model.Vector3;
 
 public class LMove extends Trace {
 
-	public Vector3 sld1;
-	public Vector3 sld2;
+	public final Vector3 sld1;
+	public final Vector3 sld2;
 	
 	public LMove(int opcode, InputStream in) throws TraceFileException {
 		int op2;

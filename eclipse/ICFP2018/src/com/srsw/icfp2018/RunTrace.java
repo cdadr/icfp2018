@@ -4,6 +4,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 
 import com.srsw.icfp2018.model.Model;
+import com.srsw.icfp2018.model.ModelRuntimeException;
 import com.srsw.icfp2018.model.State;
 
 public class RunTrace {
@@ -68,6 +69,9 @@ public class RunTrace {
 			state.validateModel(tgtModel);
 		} else if (!flag.equals("-r")) {
 			state.validateClear();
+		}
+		if (!state.bots.isEmpty()) {
+			throw new ModelRuntimeException("terminated with active bots: " + state.bots);
 		}
 		System.out.format("Model validated OK; final energy: %,d\n", state.energy);
 	}
